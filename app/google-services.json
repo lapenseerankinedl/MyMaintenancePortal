@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "99045326512",
+    "firebase_url": "https://my-maintenancenportal-89b53.firebaseio.com",
+    "project_id": "my-maintenancenportal-89b53",
+    "storage_bucket": "my-maintenancenportal-89b53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99045326512:android:be36e3cb31279470f14575",
+        "android_client_info": {
+          "package_name": "com.example.maintenancenportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99045326512-dg91a2lrd6lh4hgso621e2e504oovqov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9R_NqvvHW-j3I38a2bfjJtcVuguQoaY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "99045326512-dg91a2lrd6lh4hgso621e2e504oovqov.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
