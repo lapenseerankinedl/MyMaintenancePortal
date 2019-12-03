@@ -17,63 +17,79 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.IOException;
-
-
 public class MaintenanceRequest extends AppCompatActivity {
-    EditText desc, username;
+    EditText desc;
     RadioGroup options;
     ImageView image;
     Button submitRequest, cancelRequest;
+
     String urgencyOption;
-    FirebaseAuth mFirebaseAuth;
+    String userName;
+    String landlord;
+    DatabaseReference databaseReferenceRequest;
+    DatabaseReference databaseReferenceUser;
     DatabaseReference databaseReference;
     private int Gallary_intent = 2;
     Uri uriProfileImage;
     StorageReference imagePath;
+    String imagePathString;
     String maintenanceRequestImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maintenance_request);
+
+        Intent intentExtras = getIntent();
+        Bundle bundle = intentExtras.getExtras();
+
+        userName = getIntent().getStringExtra("username");
+
+
         desc = (EditText) findViewById(R.id.description_text);
-        username = (EditText) findViewById(R.id.userName_text);
         image = (ImageView) findViewById(R.id.imageView);
-        cancelRequest = (Button) (Button) findViewById(R.id.btnCancelRequest);
+        cancelRequest = (Button) findViewById(R.id.btnCancelRequest);
         submitRequest = (Button) findViewById(R.id.btnSubmitRequest);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Requests");
+        imagePathString = "";
+
+        databaseReferenceRequest = FirebaseDatabase.getInstance().getReference("Requests");
+        databaseReferenceUser = FirebaseDatabase.getInstance().getReference("Users");
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+
         cancelRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToHome();
+                goToHome(userName);
             }
         });
         submitRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                submitMaintenanceRequest();
+                submitMaintenanceRequest(userName);
             }
         });
     }
 
-    public void submitMaintenanceRequest()
+    public void submitMaintenanceRequest(final String userName)
     {
-        String description = desc.getText().toString().trim();
-        String urgency = urgencyOption;
+        final String description = desc.getText().toString().trim();
+        final String urgency = urgencyOption;
+
 
         if (TextUtils.isEmpty(description))
         {
@@ -85,23 +101,40 @@ public class MaintenanceRequest extends AppCompatActivity {
         }
         else
         {
-            String id = databaseReference.push().getKey();
-            Request request = new Request(id, description, "", urgency);
-            databaseReference.child(id).child("id").setValue(id.toString());
-            databaseReference.child(id).child("User").setValue("");
-            databaseReference.child(id).child("description").setValue(description.toString());
-            databaseReference.child(id).child("Urgency").setValue(urgency.toString());
-            databaseReference.child(id).child("Landlord Email").setValue("");
-            databaseReference.child(id).child("Image Path").setValue(imagePath.toString());
-            Toast.makeText(this, "Request has been created", Toast.LENGTH_LONG).show();
-            clearEntries();
-            goToHome();
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    landlord = dataSnapshot.child("Users").child(userName).child("Landlord email").getValue(String.class);
+                    String id = databaseReference.push().getKey();
+                    Request request = new Request(id.toString(), description.toString(), userName.toString(), urgency.toString(), landlord.toString(), imagePath.toString());
+                    databaseReference.child("Requests").child(id).child("id").setValue(id.toString());
+                    databaseReference.child("Requests").child(id).child("User").setValue(userName.toString());
+                    databaseReference.child("Requests").child(id).child("description").setValue(description.toString());
+                    databaseReference.child("Requests").child(id).child("Urgency").setValue(urgency.toString());
+                    databaseReference.child("Requests").child(id).child("Landlord Email").setValue(landlord.toString());
+                    databaseReference.child("Requests").child(id).child("Image Path").setValue(imagePath.toString());
+                    databaseReference.child("Requests").child(id).child("status").setValue("Landlord has not viewed the request");
+                    Toast.makeText(MaintenanceRequest.this, "Request has been created", Toast.LENGTH_LONG).show();
+                    clearEntries();
+                    goToHome(userName);
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
         }
     }
 
-    public void goToHome()
+    public void goToHome(String id)
     {
+        finish();
         Intent intent = new Intent(MaintenanceRequest.this, Home.class);
+        intent.putExtra("username", id);
         startActivity(intent);
     }
 
@@ -138,21 +171,25 @@ public class MaintenanceRequest extends AppCompatActivity {
         {
             uriProfileImage = data.getData();
             image.setImageURI(uriProfileImage);
-            imagePath = FirebaseStorage.getInstance().getReference().child("Maintenance Image").child(uriProfileImage.getLastPathSegment());
+            //imagePath = FirebaseStorage.getInstance().getReference().child("Maintenance Image").child(uriProfileImage.getLastPathSegment());
+            imagePath = FirebaseStorage.getInstance().getReference().child("Maintenance Image").child(uriProfileImage.toString());
+            submitRequest.setVisibility(View.GONE);
             imagePath.putFile(uriProfileImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(MaintenanceRequest.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                    
+                    submitRequest.setVisibility(View.VISIBLE);
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(MaintenanceRequest.this, "Not Uploaded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MaintenanceRequest.this, "Not Uploaded, please try again", Toast.LENGTH_SHORT).show();
                 }
             });
         }
     }
+
 
     public void btnImage(View view)
     {

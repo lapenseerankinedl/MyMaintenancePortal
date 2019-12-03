@@ -16,8 +16,11 @@
         <activity android:name=".Home" />
         <activity android:name=".Register" />
         <activity android:name=".MaintenanceRequest" />
+        <activity android:name=".CancelRequest"/>
+        <activity android:name=".EditRequest"/>
+        <activity android:name=".ViewHistory"/>
         <activity android:name=".MainActivity">
-            <intent-filter>
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />

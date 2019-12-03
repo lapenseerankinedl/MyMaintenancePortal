@@ -10,21 +10,6 @@
         android:ems="20"
         android:text="Maintenance Request" />
 
-    <TextView
-        android:id="@+id/userNameView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="Username:" />
-
-    <EditText
-        android:id="@+id/userName_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter username"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine" />
 
     <TextView
         android:id="@+id/descriptionView"
@@ -64,8 +49,8 @@
             android:id="@+id/mediumUrgency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Medium"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:text="Medium" />
 
         <RadioButton
             android:id="@+id/highUrgency"
@@ -76,7 +61,7 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/MaintenanceTitle"
+        android:id="@+id/MaintenancePicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -103,5 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cancel" />
+
+
 
 </LinearLayout>

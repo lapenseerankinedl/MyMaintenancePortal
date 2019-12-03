@@ -2,4 +2,12 @@
     <string name="app_name">My Maintenance Portal</string>
     <string name="register_button">Register</string>
     <string name="sign_in_button">Sign In</string>
+    <string name="name">Name: </string>
+    <string name="urgency">Request Urgency: </string>
+    <string name="check">View Request</string>
+    <string name="cancel">Cancel Request</string>
+    <string name="description">Description:</string>
+    <string name="edit">Edit Request Status</string>
+    <string name="status">Status:</string>
+    <string name="reason">Reason Cancelled:</string>
 </resources>

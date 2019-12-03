@@ -12,10 +12,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +25,7 @@ public class Register extends AppCompatActivity {
     CheckBox checked_yes;
     boolean is_checked;
     Button btnSave, btnCancel;
-    private FirebaseAuth mFirebaseAuth;
+    FirebaseAuth mFirebaseAuth;
     DatabaseReference databaseReference;
 
     @Override
@@ -90,6 +88,10 @@ public class Register extends AppCompatActivity {
         {
             Toast.makeText(this, "Please make sure to enter the same password", Toast.LENGTH_LONG).show();
         }
+        else if (password.length() < 8)
+        {
+            Toast.makeText(this, "Please make the password 8 characters or longer", Toast.LENGTH_LONG).show();
+        }
         else if(checked && TextUtils.isEmpty(emailLandlord))
         {
             Toast.makeText(this, "Please enter your landlord's email", Toast.LENGTH_LONG).show();
@@ -97,13 +99,12 @@ public class Register extends AppCompatActivity {
         }
         else
         {
-            ///*
-            mFirebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Register.this, new OnCompleteListener<AuthResult>() {
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        finish();
-                        checked_yes.setVisibility(View.GONE);
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(!dataSnapshot.child(unique).exists())
+                    {
                         String id = databaseReference.push().getKey();
                         User user = new User(id, unique, name, email, password);
                         databaseReference.child(unique).child("id").setValue(id.toString());
@@ -114,57 +115,39 @@ public class Register extends AppCompatActivity {
                         if (checked)
                         {
                             databaseReference.child(unique).child("Landlord email").setValue(emailLandlord.toString());
+                            user.setLandlordEmail(emailLandlord);
                         }
                         else
                         {
-                            databaseReference.child(unique).child("Landlord email").setValue("".toString());
-
+                            databaseReference.child(unique).child("Landlord email").setValue("None".toString());
+                            user.setLandlordEmail("None");
                         }
-                        user.setLandlordEmail(emailLandlord);
-                        Toast.makeText(getApplicationContext(), "User Registered", Toast.LENGTH_SHORT).show();
-                        openHome();
+
+                        Toast.makeText(Register.this, "User is added", Toast.LENGTH_LONG).show();
+                        openHome(unique, emailLandlord);
                     }
                     else
                     {
-                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Register.this, "This username is taken, please choose another one", Toast.LENGTH_LONG).show();
                     }
                 }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(Register.this, "Error with registering user", Toast.LENGTH_LONG).show();
+                }
             });
-
-             //*/
-            /*
-            checked_yes.setVisibility(View.GONE);
-            String id = databaseReference.push().getKey();
-            User user = new User(id, unique, name, email, password);
-            databaseReference.child(unique).child("id").setValue(id.toString());
-            databaseReference.child(unique).child("username").setValue(unique.toString());
-            databaseReference.child(unique).child("name").setValue(name.toString());
-            databaseReference.child(unique).child("email").setValue(email.toString());
-            databaseReference.child(unique).child("password").setValue(password.toString());
-            if (checked)
-            {
-                databaseReference.child(unique).child("Landlord email").setValue(emailLandlord.toString());
-            }
-            else
-            {
-                databaseReference.child(unique).child("Landlord email").setValue("".toString());
-
-            }
-            user.setLandlordEmail(emailLandlord);
-            Toast.makeText(this, "User is added", Toast.LENGTH_LONG).show();
-            openHome();
-
-
-             */
-
         }
 
     }
 
-    public void openHome()
+    public void openHome(String username, String landlordEmail)
     {
+        finish();
         Intent intent = new Intent(Register.this, Home.class);
-        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("username", username);
+        intent.putExtra("landlordEmail", landlordEmail);
         startActivity(intent);
     }
 

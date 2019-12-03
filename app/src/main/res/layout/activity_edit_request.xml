@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/statusView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change the Status of the Request:" />
+
+    <RadioGroup
+        android:id="@+id/urgency_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/seenRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seen the request"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/preparingRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="Preparing to complete the request" />
+
+        <RadioButton
+            android:id="@+id/completedRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Complete"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/btnSubmitEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit" />
+
+    <Button
+        android:id="@+id/btnCancelEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel" />
+
+
+</LinearLayout>

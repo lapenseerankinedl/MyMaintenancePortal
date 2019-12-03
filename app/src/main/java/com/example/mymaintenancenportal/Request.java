@@ -7,6 +7,8 @@ public class Request {
     private String urgency;
     private String landlordEmail;
     private String image;
+    private String status;
+    private String cancelReason;
 
     public String getRequestID() {
         return requestID;
@@ -24,12 +26,18 @@ public class Request {
         return urgency;
     }
 
-    public String getLandlordEmail() {
-        return landlordEmail;
+    public String getLandlordEmail() { return landlordEmail; }
+
+    public String getImage() { return image; }
+
+    public String getStatus() { return status; }
+
+    public String getCancelReason() {
+        return cancelReason;
     }
 
-    public String getImage() {
-        return image;
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 
     public void setRequestID(String requestID) {
@@ -52,16 +60,22 @@ public class Request {
         this.landlordEmail = landlordEmail;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage(String image) { this.image = image; }
+
+    public void setStatus(String status) { this.status = status; }
+
+    public Request() {
+
     }
 
-    public Request(String requestID, String requestText, String tenantName, String urgency) {
+    public Request(String requestID, String requestText, String tenantName, String urgency, String landlordEmail, String image) {
         this.requestID = requestID;
         this.requestText = requestText;
         this.tenantName = tenantName;
         this.urgency = urgency;
-        this.landlordEmail = "";
-        this.image = "";
+        this.landlordEmail = landlordEmail;
+        this.image = image;
+        this.status = "Landlord has not seen the request";
+        this.cancelReason = "";
     }
 }

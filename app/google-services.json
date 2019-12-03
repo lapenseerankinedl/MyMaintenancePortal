@@ -1,34 +1,71 @@
 {
   "project_info": {
-    "project_number": "99045326512",
-    "firebase_url": "https://my-maintenancenportal-89b53.firebaseio.com",
-    "project_id": "my-maintenancenportal-89b53",
-    "storage_bucket": "my-maintenancenportal-89b53.appspot.com"
+    "project_number": "866243801004",
+    "firebase_url": "https://tenant-protal.firebaseio.com",
+    "project_id": "tenant-protal",
+    "storage_bucket": "tenant-protal.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:99045326512:android:be36e3cb31279470f14575",
+        "mobilesdk_app_id": "1:866243801004:android:71bcb7bd3f6b6027755409",
         "android_client_info": {
-          "package_name": "com.example.maintenancenportal"
+          "package_name": "com.example.MyMaintenancePortal"
         }
       },
       "oauth_client": [
         {
-          "client_id": "99045326512-dg91a2lrd6lh4hgso621e2e504oovqov.apps.googleusercontent.com",
+          "client_id": "866243801004-e1n7pev40l8hom5iqnqb7224n4i53erc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC9R_NqvvHW-j3I38a2bfjJtcVuguQoaY8"
+          "current_key": "AIzaSyAsu6aEfgT5uPXds0YPtBIW3xD46lY7e1g"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "99045326512-dg91a2lrd6lh4hgso621e2e504oovqov.apps.googleusercontent.com",
+              "client_id": "866243801004-e1n7pev40l8hom5iqnqb7224n4i53erc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866243801004:android:7351c2cec7c194ec755409",
+        "android_client_info": {
+          "package_name": "com.example.mytenantportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "866243801004-sl4ca7cgka7o80ie3di5gjjab9dm7nni.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mytenantportal",
+            "certificate_hash": "0490b5271db17597170b01f3bfa2ec66e72ddefa"
+          }
+        },
+        {
+          "client_id": "866243801004-e1n7pev40l8hom5iqnqb7224n4i53erc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsu6aEfgT5uPXds0YPtBIW3xD46lY7e1g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "866243801004-e1n7pev40l8hom5iqnqb7224n4i53erc.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

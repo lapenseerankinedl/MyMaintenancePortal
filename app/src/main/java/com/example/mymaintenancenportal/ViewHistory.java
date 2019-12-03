@@ -1,5 +1,6 @@
 package com.example.mymaintenancenportal;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,18 +20,19 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class ViewRequests extends AppCompatActivity {
+public class ViewHistory extends AppCompatActivity{
+
     String userName;
     Button back;
     DatabaseReference reference;
     RecyclerView recyclerView;
     ArrayList<Request> list;
-    MyAdapter adapter;
+    MyAdapterHistory adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_requests);
+        setContentView(R.layout.activity_view_history);
 
         recyclerView = (RecyclerView) findViewById(R.id.viewRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -40,7 +42,7 @@ public class ViewRequests extends AppCompatActivity {
 
         userName = getIntent().getStringExtra("username");
         reference = FirebaseDatabase.getInstance().getReference();
-        back = (Button) findViewById(R.id.btn_back);
+        back = (Button) findViewById(R.id.btn_back_history);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -57,26 +59,28 @@ public class ViewRequests extends AppCompatActivity {
                         if (userName.equals(name))
                         {
                             String stat = dataSnapshot1.child("status").getValue(String.class);
-                            if (!stat.equals("Request has been cancelled")
-                                    && !stat.equals("Landlord has completed the request"))
+                            if (stat.equals("Request has been cancelled")
+                                    || stat.equals("Landlord has completed the request"))
                             {
                                 String status = dataSnapshot1.child("status").getValue(String.class);
                                 String urgency = dataSnapshot1.child("Urgency").getValue(String.class);
                                 String image = dataSnapshot1.child("Image Path").getValue(String.class);
                                 String des = dataSnapshot1.child("description").getValue(String.class);
+                                String rea = dataSnapshot1.child("cancel reason").getValue(String.class);
                                 String key = dataSnapshot1.getKey();
                                 r.setTenantName(name);
                                 r.setUrgency(urgency);
                                 r.setImage(image);
                                 r.setRequestText(des);
                                 r.setStatus(stat);
+                                r.setCancelReason(rea);
                                 r.setRequestID(key);
                                 list.add(r);
                             }
                         }
 
                     }
-                    adapter = new MyAdapter(ViewRequests.this, list, userName, false);
+                    adapter = new MyAdapterHistory(ViewHistory.this, list, userName, false);
                     recyclerView.setAdapter(adapter);
 
                 }
@@ -91,26 +95,27 @@ public class ViewRequests extends AppCompatActivity {
                         if (email.equals(landlord))
                         {
                             String stat = dataSnapshot1.child("status").getValue(String.class);
-                            if (!stat.equals("Request has been cancelled")
-                                    && !stat.equals("Landlord has completed the request"))
+                            if (stat.equals("Request has been cancelled")
+                                    || stat.equals("Landlord has completed the request"))
                             {
                                 String urgency = dataSnapshot1.child("Urgency").getValue(String.class);
                                 String image = dataSnapshot1.child("Image Path").getValue(String.class);
                                 String key = dataSnapshot1.getKey();
                                 String des = dataSnapshot1.child("description").getValue(String.class);
+                                String rea = dataSnapshot1.child("cancel reason").getValue(String.class);
                                 r.setTenantName(name);
                                 r.setUrgency(urgency);
                                 r.setImage(image);
                                 r.setRequestText(des);
                                 r.setStatus(stat);
+                                r.setCancelReason(rea);
                                 r.setRequestID(key);
                                 list.add(r);
-
                             }
 
                         }
                     }
-                    adapter = new MyAdapter(ViewRequests.this, list, userName, true);
+                    adapter = new MyAdapterHistory(ViewHistory.this, list, userName, true);
                     recyclerView.setAdapter(adapter);
 
                 }
@@ -119,7 +124,7 @@ public class ViewRequests extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(ViewRequests.this, "Something is wrong", Toast.LENGTH_LONG).show();
+                Toast.makeText(ViewHistory.this, "Something is wrong", Toast.LENGTH_LONG).show();
             }
         });
         back.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +139,7 @@ public class ViewRequests extends AppCompatActivity {
     public void goHome(String id)
     {
         finish();
-        Intent intent = new Intent(ViewRequests.this, Home.class);
+        Intent intent = new Intent(ViewHistory.this, Home.class);
         intent.putExtra("username", id);
         startActivity(intent);
     }

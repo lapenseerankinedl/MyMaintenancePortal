@@ -11,10 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     EditText userName, password;
     Button btnSignIn, btnRegister;
     FirebaseAuth mFirebaseAuth;
+    FirebaseUser user;
     DatabaseReference databaseReference;
     String username;
 
@@ -56,53 +55,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void signIn(final String id, final String p)
     {
-        /*
-        String email = userName.getText().toString().trim();
-        String pass = password.getText().toString().trim();
-        if(TextUtils.isEmpty(pass))
-        {
-            Toast.makeText(this, "Please enter your password", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(email))
-        {
-            Toast.makeText(this, "Please enter your email", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-
-            mFirebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful())
-                    {
-                        finish();
-                        Toast.makeText(MainActivity.this,"Login Success", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getApplicationContext(), Home.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this, "Email or Password is not correct", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
-        //*/
-
-        ///*
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child(id).exists()) {
                     if (!id.isEmpty()) {
-                        User user=dataSnapshot.child(id).getValue(User.class);
+                        User user = dataSnapshot.child(id).getValue(User.class);
                         if (user.getPassword().equals(p)){
-                            username = id;
+                            finish();
                             Toast.makeText(MainActivity.this,"Login Success", Toast.LENGTH_LONG).show();
-                            Intent intphto =new Intent(getApplicationContext(), Home.class);
-                            intphto.putExtra("username", username);
+                            Intent intphto = new Intent(MainActivity.this, Home.class);
+                            intphto.putExtra("username", id);
+                            intphto.putExtra("landlordEmail", user.getLandlordEmail());
                             startActivity(intphto);
                         }
                         else {
@@ -120,17 +84,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Toast.makeText(MainActivity.this, "Error with logging in user", Toast.LENGTH_LONG).show();
             }
         });
-
-         //*/
 
     }
 
 
     public void registerUser()
     {
+        finish();
         Intent intent = new Intent(MainActivity.this, Register.class);
         startActivity(intent);
     }
