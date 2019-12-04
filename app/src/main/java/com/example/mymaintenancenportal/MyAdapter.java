@@ -7,19 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.squareup.picasso.Picasso;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
@@ -37,7 +31,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         requests = r;
         userName = u;
         isLandlord = l;
-        //this.listener = listener;
     }
 
     @Override
@@ -55,7 +48,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.urgency.setText(requests.get(position).getUrgency());
         holder.status.setText(requests.get(position).getStatus());
         holder.setId(requests.get(position).getRequestID());
-        Picasso.get().load(requests.get(position).getImage()).into(holder.requestImage);
+        if(!requests.get(position).getImage().equals(""))
+        {
+            Picasso.get()
+                    .load(requests.get(position).getImage())
+                    .fit()
+                    .into(holder.requestImage);
+        }
         if (isLandlord)
         {
             holder.editButton.setVisibility(View.VISIBLE);

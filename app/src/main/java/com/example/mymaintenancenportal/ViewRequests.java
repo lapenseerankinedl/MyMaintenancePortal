@@ -57,7 +57,7 @@ public class ViewRequests extends AppCompatActivity {
                         if (userName.equals(name))
                         {
                             String stat = dataSnapshot1.child("status").getValue(String.class);
-                            if (!stat.equals("Request has been cancelled")
+                            if (stat != null && !stat.equals("Request has been cancelled")
                                     && !stat.equals("Landlord has completed the request"))
                             {
                                 String status = dataSnapshot1.child("status").getValue(String.class);
@@ -74,7 +74,6 @@ public class ViewRequests extends AppCompatActivity {
                                 list.add(r);
                             }
                         }
-
                     }
                     adapter = new MyAdapter(ViewRequests.this, list, userName, false);
                     recyclerView.setAdapter(adapter);
@@ -91,7 +90,7 @@ public class ViewRequests extends AppCompatActivity {
                         if (email.equals(landlord))
                         {
                             String stat = dataSnapshot1.child("status").getValue(String.class);
-                            if (!stat.equals("Request has been cancelled")
+                            if (stat != null && !stat.equals("Request has been cancelled")
                                     && !stat.equals("Landlord has completed the request"))
                             {
                                 String urgency = dataSnapshot1.child("Urgency").getValue(String.class);

@@ -25,17 +25,6 @@
         app:layout_constraintTop_toBottomOf="@+id/userNameView"
         tools:layout_editor_absoluteX="89dp" />
 
-    <TextView
-        android:id="@+id/landlordEmailWritten"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:ems="10"
-        android:text="LandlordEmail"
-        app:layout_constraintTop_toBottomOf="@+id/userNameWritten"
-        tools:layout_editor_absoluteX="89dp" />
-
-
 
     <TextView
         android:id="@+id/textView"

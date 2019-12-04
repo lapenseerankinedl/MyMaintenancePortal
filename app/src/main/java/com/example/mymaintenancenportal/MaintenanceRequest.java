@@ -4,20 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,17 +35,17 @@ public class MaintenanceRequest extends AppCompatActivity {
     ImageView image;
     Button submitRequest, cancelRequest;
 
+    private static final int PICk_IMAGE_REQUEST = 1;
+
     String urgencyOption;
     String userName;
     String landlord;
     DatabaseReference databaseReferenceRequest;
     DatabaseReference databaseReferenceUser;
     DatabaseReference databaseReference;
-    private int Gallary_intent = 2;
     Uri uriProfileImage;
     StorageReference imagePath;
     String imagePathString;
-    String maintenanceRequestImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +67,7 @@ public class MaintenanceRequest extends AppCompatActivity {
         databaseReferenceRequest = FirebaseDatabase.getInstance().getReference("Requests");
         databaseReferenceUser = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        imagePath = FirebaseStorage.getInstance().getReference().child("Maintenance Image");
 
 
         cancelRequest.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +100,6 @@ public class MaintenanceRequest extends AppCompatActivity {
         }
         else
         {
-
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -113,7 +111,7 @@ public class MaintenanceRequest extends AppCompatActivity {
                     databaseReference.child("Requests").child(id).child("description").setValue(description.toString());
                     databaseReference.child("Requests").child(id).child("Urgency").setValue(urgency.toString());
                     databaseReference.child("Requests").child(id).child("Landlord Email").setValue(landlord.toString());
-                    databaseReference.child("Requests").child(id).child("Image Path").setValue(imagePath.toString());
+                    databaseReference.child("Requests").child(id).child("Image Path").setValue(imagePathString.toString());
                     databaseReference.child("Requests").child(id).child("status").setValue("Landlord has not viewed the request");
                     Toast.makeText(MaintenanceRequest.this, "Request has been created", Toast.LENGTH_LONG).show();
                     clearEntries();
@@ -163,38 +161,67 @@ public class MaintenanceRequest extends AppCompatActivity {
         }
     }
 
+    public void btnImage(View view)
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, PICk_IMAGE_REQUEST);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Gallary_intent && resultCode == RESULT_OK && data != null && data.getData() != null)
+        if (requestCode == PICk_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null)
         {
             uriProfileImage = data.getData();
             image.setImageURI(uriProfileImage);
-            //imagePath = FirebaseStorage.getInstance().getReference().child("Maintenance Image").child(uriProfileImage.getLastPathSegment());
-            imagePath = FirebaseStorage.getInstance().getReference().child("Maintenance Image").child(uriProfileImage.toString());
-            submitRequest.setVisibility(View.GONE);
-            imagePath.putFile(uriProfileImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(MaintenanceRequest.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                    submitRequest.setVisibility(View.VISIBLE);
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(MaintenanceRequest.this, "Not Uploaded, please try again", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (uriProfileImage != null)
+            {
+                final StorageReference fileReference = imagePath.child(System.currentTimeMillis()
+                        + "." + getFileExtension(uriProfileImage));
+                submitRequest.setVisibility(View.INVISIBLE);
+                fileReference.putFile(uriProfileImage)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Toast.makeText(MaintenanceRequest.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                submitRequest.setVisibility(View.VISIBLE);
+                                fileReference.getDownloadUrl()
+                                        .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        imagePathString = uri.toString();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(MaintenanceRequest.this, "Failed getting the download url", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MaintenanceRequest.this, "Not uploaded, please try again", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+            else
+            {
+                imagePathString = "";
+            }
         }
     }
 
-
-    public void btnImage(View view)
+    private String getFileExtension(Uri uri)
     {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, Gallary_intent);
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 }

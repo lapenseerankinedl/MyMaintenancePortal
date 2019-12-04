@@ -4,12 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,10 +17,9 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Home extends AppCompatActivity {
     Button maintenanceRequest, viewRequests, viewHistory, logOutButton;
-    TextView userView, landlordView;
+    TextView userView;
     String userName;
     String landlordEmail;
-    User person;
     DatabaseReference databaseReference;
 
     @Override
@@ -32,13 +29,11 @@ public class Home extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Users");
 
         Intent intentExtras = getIntent();
-        Bundle bundle = intentExtras.getExtras();
 
         userName = getIntent().getStringExtra("username");
         landlordEmail = getIntent().getStringExtra("landlordEmail");
 
         userView = (TextView) findViewById(R.id.userNameWritten);
-        landlordView = (TextView) findViewById(R.id.landlordEmailWritten);
         maintenanceRequest = (Button) findViewById(R.id.btn_make_request);
         viewRequests = (Button) findViewById(R.id.btn_view_request);
         viewHistory = (Button) findViewById(R.id.btn_view_history);

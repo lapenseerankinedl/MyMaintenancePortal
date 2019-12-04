@@ -1,21 +1,13 @@
 package com.example.mymaintenancenportal;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.squareup.picasso.Picasso;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -51,7 +43,13 @@ public class MyAdapterHistory extends RecyclerView.Adapter<MyAdapterHistory.MyVi
         holder.status.setText(requests.get(position).getStatus());
         holder.reason.setText(requests.get(position).getCancelReason());
         holder.setId(requests.get(position).getRequestID());
-        Picasso.get().load(requests.get(position).getImage()).into(holder.requestImage);
+        if(!requests.get(position).getImage().equals(""))
+        {
+            Picasso.get()
+                    .load(requests.get(position).getImage())
+                    .fit()
+                    .into(holder.requestImage);
+        }
     }
 
     @Override
